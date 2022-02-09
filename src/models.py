@@ -26,6 +26,27 @@ Base = declarative_base()
 #    person_id = Column(Integer, ForeignKey('person.id'))
 #    person = relationship(Person)
 
+class Local(Base):
+    __tablename__ = 'local'
+    id = Column(Integer, primary_key=True)
+    coordinates = Column(Integer, nullable=False)
+
+class Media(Base):
+    __tablename__ = 'media'
+    id = Column(Integer, primary_key=True)
+    type = Column(String(250), nullable=False)
+    url = Column(String(250), nullable=False)
+
+class Posts(Base):
+    __tablename__ = 'posts'
+    id = Column(Integer, primary_key=True)
+    date_posted = Column(String(250), nullable=False)
+    local_id = Column(Integer, ForeignKey('local.id'))
+    local = relationship(Local)
+    media_id = Column(Integer, ForeignKey('media.id'))
+    media = relationship(Media)
+    
+
 class User(Base):
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
@@ -36,6 +57,32 @@ class User(Base):
     posts_id = Column(Integer, ForeignKey('posts.id'))
     posts = relationship(Posts)
 
+
+class Sugestions(Base):
+    __tablename__ = 'sugestions'
+    id = Column(Integer, primary_key=True)
+    sugestion = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+
+
+class Comments(Base):
+    __tablename__ = 'comments'
+    id = Column(Integer, primary_key=True)
+    text = Column(String, ForeignKey('local.id'))
+    author = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    post_id = Column(Integer, ForeignKey('posts.id'))
+    post = relationship(Posts)
+
+class Likes(Base):
+    __tablename__ = 'likes'
+    id = Column(Integer, primary_key=True)
+    text = Column(String, ForeignKey('local.id'))
+    author = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    post_id = Column(Integer, ForeignKey('posts.id'))
+    post = relationship(Posts)
+
 class Followers(Base):
     __tablename__ = 'follow'
     id = Column(Integer, primary_key=True)
@@ -44,32 +91,13 @@ class Followers(Base):
     following_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
-class Sugestions(Base):
-    __tablename__ = 'sugestions'
+class Saved(Base):
+    __tablename__ = 'saved'
     id = Column(Integer, primary_key=True)
-    sugestion = Column(Integer, ForeignKey('user.id'))
+    author_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
-
-class Posts(Base):
-    __tablename__ = 'posts'
-    id = Column(Integer, primary_key=True)
-    date_posted = Column(String(250), nullable=False)
-    local = Column(String, ForeignKey('local.id'))
-    local = relationship(Local)
-
-class Comments(Base):
-    __tablename__ = 'comments'
-    id = Column(Integer, primary_key=True)
-    text = Column(String, ForeignKey('local.id'))
-    author = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
-    post_id = Column(Integer, ForeignKey('post.id'))
+    post_id = Column(Integer, ForeignKey('posts.id'))
     post = relationship(Posts)
-
-
-
-
-
 
     def to_dict(self):
         return {}
